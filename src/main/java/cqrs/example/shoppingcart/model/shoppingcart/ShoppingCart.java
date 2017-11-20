@@ -1,4 +1,4 @@
-package cqrs.example.shoppingcart.model;
+package cqrs.example.shoppingcart.model.shoppingcart;
 
 import org.axonframework.commandhandling.annotation.CommandHandler;
 import org.axonframework.eventsourcing.annotation.AbstractAnnotatedAggregateRoot;
@@ -18,10 +18,7 @@ public class ShoppingCart extends AbstractAnnotatedAggregateRoot {
     @CommandHandler
     public ShoppingCart(AddItemCommand command) {
         id=command.getItemId();
-        //put here the business logic
-        //....
-
-        apply(new ItemAddedEvent(command.getItemId()));
+        apply(new ItemAddedEvent(command.getItemId(), "shoppingcart"));
     }
 
 //    @CommandHandler

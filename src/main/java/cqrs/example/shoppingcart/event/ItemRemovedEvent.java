@@ -12,10 +12,16 @@ public class ItemRemovedEvent {
 
     private final String cartId;
     private final String itemId;
+    private final String domain;
 
-    public ItemRemovedEvent(String cartId, String itemId) {
+    public ItemRemovedEvent(String cartId, String itemId, String domain) {
         this.cartId = cartId;
         this.itemId = itemId;
+        this.domain = domain;
+    }
+
+    public String getDomain() {
+        return domain;
     }
 
 }

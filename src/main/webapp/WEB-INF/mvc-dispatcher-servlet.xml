@@ -4,7 +4,8 @@
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
-       xmlns:axon="http://www.axonframework.org/schema/core" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:axon="http://www.axonframework.org/schema/core"
+       xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                 http://www.springframework.org/schema/beans/spring-beans.xsd
                 http://www.springframework.org/schema/context
@@ -15,11 +16,6 @@
     <context:annotation-config/>
 
     <tx:annotation-driven transaction-manager="transactionManager"/>
-
-    <!-- Define a command bus -->
-    <axon:command-bus id="commandBus" transaction-manager="transactionManager" />
-
-    <axon:event-bus id="eventBus"/>
 
     <axon:cluster id="async">
         <bean class="org.axonframework.eventhandling.async.AsynchronousCluster">
@@ -41,22 +37,80 @@
         <property name="waitForTasksToCompleteOnShutdown" value="true"/>
     </bean>
 
+    <!-- shoppingCartDomain -->
+    <axon:command-bus id="commandBus" transaction-manager="transactionManager" />
+    <axon:command-bus id="commandBusDomainA" transaction-manager="transactionManager" />
+    <axon:command-bus id="commandBusDomainB" transaction-manager="transactionManager" />
+    <axon:event-bus id="eventBus"/>
     <axon:event-sourcing-repository id="shoppingCartRepository"
-                                    aggregate-type="cqrs.example.shoppingcart.model.ShoppingCart"/>
+                                    aggregate-type="cqrs.example.shoppingcart.model.shoppingcart.ShoppingCart"/>
 
     <axon:aggregate-command-handler id="ShoppingCartHandler"
-                                    aggregate-type="cqrs.example.shoppingcart.model.ShoppingCart"
+                                    aggregate-type="cqrs.example.shoppingcart.model.shoppingcart.ShoppingCart"
                                     repository="shoppingCartRepository"
-                                    command-bus="commandBus" />
+                                    command-bus="commandBus"/>
+    <bean class="org.axonframework.eventhandling.annotation.AnnotationEventListenerBeanPostProcessor">
+        <property name="eventBus" ref="eventBus"/>
+    </bean>
+    <bean class="org.axonframework.commandhandling.annotation.AnnotationCommandHandlerBeanPostProcessor">
+        <property name="commandBus" ref="commandBus"/>
+    </bean>
+    <bean name="commandGatewayShoppingCart" class="org.axonframework.commandhandling.gateway.CommandGatewayFactoryBean">
+        <property name="commandBus" ref="commandBus"/>
+    </bean>
+    <bean name="commandGatewayDomainA" class="org.axonframework.commandhandling.gateway.CommandGatewayFactoryBean">
+        <property name="commandBus" ref="commandBusDomainA"/>
+    </bean>
+    <bean name="commandGatewayDomainB" class="org.axonframework.commandhandling.gateway.CommandGatewayFactoryBean">
+        <property name="commandBus" ref="commandBusDomainB"/>
+    </bean>
+    <!-- end -->
+    <!-- domainA -->
+    <axon:event-sourcing-repository id="aggregatorA1Repository"
+                                    aggregate-type="cqrs.example.shoppingcart.model.domainA.AggregatorA1"/>
+    <axon:event-sourcing-repository id="aggregatorA2Repository"
+                                    aggregate-type="cqrs.example.shoppingcart.model.domainA.AggregatorA2"/>
+    <axon:event-sourcing-repository id="aggregatorA3Repository"
+                                    aggregate-type="cqrs.example.shoppingcart.model.domainA.AggregatorA3"/>
+    <axon:aggregate-command-handler id="DomainA1Handler"
+                                    aggregate-type="cqrs.example.shoppingcart.model.domainA.AggregatorA1"
+                                    repository="aggregatorA1Repository"
+                                    command-bus="commandBusDomainA" />
+    <axon:aggregate-command-handler id="DomainA2Handler"
+                                    aggregate-type="cqrs.example.shoppingcart.model.domainA.AggregatorA2"
+                                    repository="aggregatorA2Repository"
+                                    command-bus="commandBusDomainA" />
+    <axon:aggregate-command-handler id="DomainA3Handler"
+                                    aggregate-type="cqrs.example.shoppingcart.model.domainA.AggregatorA3"
+                                    repository="aggregatorA3Repository"
+                                    command-bus="commandBusDomainA" />
+    <!-- end     -->
+
+    <!-- domainB -->
+    <axon:event-sourcing-repository id="aggregatorB1Repository"
+                                    aggregate-type="cqrs.example.shoppingcart.model.domainB.AggregatorB1"/>
+    <axon:event-sourcing-repository id="aggregatorB2Repository"
+                                    aggregate-type="cqrs.example.shoppingcart.model.domainB.AggregatorB2"/>
+    <axon:event-sourcing-repository id="aggregatorB3Repository"
+                                    aggregate-type="cqrs.example.shoppingcart.model.domainB.AggregatorB3"/>
+    <axon:aggregate-command-handler id="DomainB1Handler"
+                                    aggregate-type="cqrs.example.shoppingcart.model.domainB.AggregatorB1"
+                                    repository="aggregatorB1Repository"
+                                    command-bus="commandBusDomainB" />
+    <axon:aggregate-command-handler id="DomainB2Handler"
+                                    aggregate-type="cqrs.example.shoppingcart.model.domainB.AggregatorB2"
+                                    repository="aggregatorA2Repository"
+                                    command-bus="commandBusDomainB" />
+    <axon:aggregate-command-handler id="DomainB3Handler"
+                                    aggregate-type="cqrs.example.shoppingcart.model.domainB.AggregatorB3"
+                                    repository="aggregatorB3Repository"
+                                    command-bus="commandBusDomainB" />
+    <!-- end     -->
 
     <axon:jpa-event-store id="eventStore" entity-manager-provider="myEntityManagerProvider"
                           event-serializer="eventSerializer" max-snapshots-archived="2" batch-size="1000"/>
 
     <bean id="myEntityManagerProvider" class="org.axonframework.common.jpa.ContainerManagedEntityManagerProvider" />
-
-    <bean class="org.axonframework.commandhandling.gateway.CommandGatewayFactoryBean">
-        <property name="commandBus" ref="commandBus"/>
-    </bean>
 
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="packagesToScan" value="org.axonframework.eventstore.jpa"/>
@@ -90,18 +144,9 @@
 
     <bean id="eventSerializer" class="org.axonframework.serializer.xml.XStreamSerializer"/>
 
-    <bean class="org.axonframework.eventhandling.annotation.AnnotationEventListenerBeanPostProcessor">
-        <property name="eventBus" ref="eventBus"/>
-    </bean>
+    <bean id="eventListener" class="cqrs.example.shoppingcart.eventhandler.ShoppingCartEventListener"/>
 
-    <bean class="cqrs.example.shoppingcart.eventhandler.ShoppingCartEventListener"/>
-
-
-    <bean class="org.axonframework.commandhandling.annotation.AnnotationCommandHandlerBeanPostProcessor">
-        <property name="commandBus" ref="commandBus"/>
-    </bean>
-
-    <bean class="cqrs.example.shoppingcart.model.ShoppingCart"/>
+    <bean class="cqrs.example.shoppingcart.model.shoppingcart.ShoppingCart"/>
 
     <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/"/>

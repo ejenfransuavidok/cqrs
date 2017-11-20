@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CustomBeanRegistry">
+    <option name="map">
+      <map>
+        <entry key="&lt;axon:event-bus xmlns:axon=&quot;http://www.axonframework.org/schema/core&quot; name=&quot;dd&quot; id=&quot;eventBus&quot; /&gt;">
+          <value>
+            <list>
+              <CustomBeanInfo>
+                <option name="beanName" value="eventBus" />
+                <option name="beanClassName" value="org.axonframework.eventhandling.ClusteringEventBus" />
+                <option name="idAttribute" value="id" />
+                <option name="constructorArgumentCount" value="1" />
+              </CustomBeanInfo>
+            </list>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="policies">
+      <map>
+        <entry>
+          <key>
+            <MyQName>
+              <option name="namespace" value="http://www.axonframework.org/schema/core" />
+              <option name="localName" value="event-bus" />
+            </MyQName>
+          </key>
+          <value>
+            <CustomBeanInfo>
+              <option name="beanClassName" value="org.axonframework.eventhandling.ClusteringEventBus" />
+              <option name="idAttribute" value="id" />
+              <option name="constructorArgumentCount" value="1" />
+            </CustomBeanInfo>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
