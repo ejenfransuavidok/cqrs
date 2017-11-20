@@ -1,0 +1,37 @@
+group 'Cqrs'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'war'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'org.springframework', name: 'spring-webmvc', version: '4.3.12.RELEASE'
+    compile group: 'org.springframework', name: 'spring-context', version: '4.3.12.RELEASE'
+    compile group: 'org.springframework', name: 'spring-core', version: '4.3.12.RELEASE'
+    compile group: 'org.springframework', name: 'spring-orm', version: '4.3.12.RELEASE'
+    compile group: 'org.springframework', name: 'spring-tx', version: '4.3.12.RELEASE'
+
+
+    compile group: 'org.axonframework', name: 'axon-core', version: '2.4.6'
+
+    compile group: 'org.hibernate', name: 'hibernate-core', version: '4.3.0.Final'
+    compile group: 'org.hibernate', name: 'hibernate-entitymanager', version: '5.2.12.Final'
+
+
+    compile group: 'com.h2database', name: 'h2', version: '1.4.196'
+
+    compile group: 'org.postgresql', name: 'postgresql', version: '42.1.4'
+
+    compile group: 'log4j', name: 'log4j', version: '1.2.16'
+
+    compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.25'
+
+    compile group: 'org.postgresql', name: 'postgresql', version: '42.1.4'
+    compile group: 'log4j', name: 'log4j', version: '1.2.16'
+}
